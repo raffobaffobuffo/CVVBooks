@@ -8,7 +8,6 @@ class Client:
         isLogged = self.LogIn(uid, pwd)
         assert isLogged, "Log in failed"
         print(" * Logged to ClasseViva")
-        self.Books = dict()
 
     def LogIn(self, uid, pwd):
         request = self.Session.post("https://web.spaggiari.eu/auth-p7/app/default/AuthApi4.php?a=aLoginPwd",
@@ -17,6 +16,7 @@ class Client:
         return response
 
     def GetBooks(self):
+        result = list()
         content = BeautifulSoup(self.Session.get("https://web.spaggiari.eu/ldt/app/default/libri_studente.php").content, "html.parser")
         books = content.find_all("tr", class_="gen ado")
         for book in books:
@@ -25,5 +25,6 @@ class Client:
             price = book.find_all("p", class_="open_sans_condensed darkgraytext font_size_14 bold")[0].text
             to_buy = book.find_all("p", class_="open_sans_condensed graytext font_size_13 margin_top_2")[0].find("strong").text
             link = f"https://www.amazon.it/s?k={id}"
-            self.Books[id] = {"title": title, "price": price, "toBuy": to_buy,
-                    "link": link}
+            result.append({"id": id, "title": title, "price": price, "toBuy": to_buy,
+                    "link": link})
+        return result

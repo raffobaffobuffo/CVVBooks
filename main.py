@@ -1,6 +1,5 @@
+from flask import Flask, render_template
 from client import Client
-from flask import Flask, jsonify
-import json
 import sys
 
 uid, pwd = sys.argv[1], sys.argv[2]
@@ -18,9 +17,8 @@ app = Flask(__name__)
 
 @app.route("/")
 def showBook():
-    client.GetBooks()
-    books = json.dumps(client.Books)
-    return books
+    books = client.GetBooks()
+    return render_template("results.html", books=books)
 
 if __name__=="__main__":
     app.run()
